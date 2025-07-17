@@ -37,7 +37,7 @@ namespace NestLeaf.Controllers
                 return BadRequest(new ApiResponse<string>(false, "ID mismatch", null));
 
             var result = await _categoryService.UpdateCategory(dto);
-
+          
             if (!result.Success)
                 return NotFound(result);
 

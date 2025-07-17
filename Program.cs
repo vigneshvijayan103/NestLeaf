@@ -4,11 +4,16 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using NestLeaf.Models;
+using NestLeaf.Service;
 using NestLeaf.Services;
 using System.Data;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
 
 
 builder.Services.AddDbContext<NestLeafDbContext>(options =>
@@ -22,6 +27,19 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IcategoryService, CategoryService>();
+builder.Services.AddScoped<ICartService, CartService>();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+        policy =>
+        {
+            policy.WithOrigins("http://127.0.0.1:5500") // or your frontend address
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
+
 
 
 
@@ -87,6 +105,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors(MyAllowSpecificOrigins);   //kdlks
+
 
 app.UseAuthentication();
 app.UseAuthorization();

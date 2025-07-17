@@ -19,7 +19,7 @@ namespace NestLeaf.Controllers
              _userService = userservice;
         }
 
-        [HttpPost("register")]
+        [HttpPost("register")] 
 
         public async Task<IActionResult> Register([FromBody]UserRegisterDto dto)
         {
@@ -40,13 +40,19 @@ namespace NestLeaf.Controllers
 
                   
         }
+       
 
 
-        [HttpPost("Login")]
+        [HttpPost("login")]
 
         public async Task<IActionResult> Login([FromBody] UserLoginDto loginDto)
         {
-            var userlog=await _userService.UserLogin(loginDto);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var userlog =await _userService.UserLogin(loginDto);
          
 
            if(userlog == null)
