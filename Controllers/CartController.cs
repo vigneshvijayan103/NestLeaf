@@ -1,3 +1,4 @@
+
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -7,10 +8,13 @@ using NestLeaf.Response;
 using NestLeaf.Service;
 using System.Security.Claims;
 
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 namespace NestLeaf.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+
     [Authorize(Roles = "user")]
     public class CartController : ControllerBase
     {
@@ -23,7 +27,7 @@ namespace NestLeaf.Controllers
 
         [HttpPost]
 
-        public async Task  <IActionResult> AddtoCart([FromBody] AddCartDto dto)
+        public async Task<IActionResult> AddtoCart([FromBody] AddCartDto dto)
 
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -31,11 +35,11 @@ namespace NestLeaf.Controllers
 
 
 
-            var result=await  _cartService.AddtoCart(dto, userId);
+            var result = await _cartService.AddtoCart(dto, userId);
 
             return Ok(new ApiResponse<CartItemDto>(true, "Product added to cart", result));
 
-                
+
         }
         [HttpGet]
 
@@ -44,14 +48,14 @@ namespace NestLeaf.Controllers
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             int userId = int.Parse(userIdClaim.Value);
 
-            var result=await _cartService.GetCart(userId);
+            var result = await _cartService.GetCart(userId);
 
-            if (result==null)
+            if (result == null)
             {
                 return Ok(new ApiResponse<ViewCartDto>(true, "Cart is empty", result));
             }
 
-           return Ok(new ApiResponse<ViewCartDto>(true,"cart fetched successfully",result));
+            return Ok(new ApiResponse<ViewCartDto>(true, "cart fetched successfully", result));
         }
 
         [HttpPost("update-quantity")]
@@ -63,7 +67,7 @@ namespace NestLeaf.Controllers
 
             var result = await _cartService.UpdateCartQuantity(dto, userId);
 
-            if (result==null)
+            if (result == null)
                 return NotFound(new ApiResponse<ViewCartDto>(false, "Item not found", result));
 
             return Ok(new ApiResponse<ViewCartDto>(true, "Product quantity updated successfully", result));
@@ -72,12 +76,12 @@ namespace NestLeaf.Controllers
 
         [HttpDelete("removeItem/{productId}")]
 
-        public async Task<IActionResult>RemovecartItem(int productId)
+        public async Task<IActionResult> RemovecartItem(int productId)
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             int userId = int.Parse(userIdClaim.Value);
 
-            var result=await _cartService.RemoveItem(userId,productId);
+            var result = await _cartService.RemoveItem(userId, productId);
 
             if (result == null)
             {
@@ -108,5 +112,7 @@ namespace NestLeaf.Controllers
 
 
 
+
     }
 }
+
