@@ -28,6 +28,8 @@ builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IcategoryService, CategoryService>();
 builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<IwishlistService, WishlistService>();
+builder.Services.AddScoped<IAddressService, AddressService>();
 
 builder.Services.AddCors(options =>
 {

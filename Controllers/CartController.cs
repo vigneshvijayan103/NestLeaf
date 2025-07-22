@@ -24,15 +24,18 @@ namespace NestLeaf.Controllers
         {
             _cartService = cartService;
         }
+        private int GetUserId()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            return int.Parse(userIdClaim.Value);
+        }
 
         [HttpPost]
 
         public async Task<IActionResult> AddtoCart([FromBody] AddCartDto dto)
 
         {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-            int userId = int.Parse(userIdClaim.Value);
-
+            int userId = GetUserId();
 
 
             var result = await _cartService.AddtoCart(dto, userId);
@@ -45,8 +48,7 @@ namespace NestLeaf.Controllers
 
         public async Task<IActionResult> GetCart()
         {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-            int userId = int.Parse(userIdClaim.Value);
+            int userId = GetUserId();
 
             var result = await _cartService.GetCart(userId);
 
@@ -62,8 +64,7 @@ namespace NestLeaf.Controllers
 
         public async Task<IActionResult> UpdateQuantity([FromBody] AddCartDto dto)
         {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-            int userId = int.Parse(userIdClaim.Value);
+            int userId = GetUserId();
 
             var result = await _cartService.UpdateCartQuantity(dto, userId);
 
@@ -78,8 +79,7 @@ namespace NestLeaf.Controllers
 
         public async Task<IActionResult> RemovecartItem(int productId)
         {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-            int userId = int.Parse(userIdClaim.Value);
+            int userId = GetUserId();
 
             var result = await _cartService.RemoveItem(userId, productId);
 
@@ -97,8 +97,7 @@ namespace NestLeaf.Controllers
 
         public async Task<IActionResult> DeleteCart()
         {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-            int userId = int.Parse(userIdClaim.Value);
+            int userId = GetUserId();
 
             var result = await _cartService.DeleteCart(userId);
             if (result == false)

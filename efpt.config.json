@@ -7,7 +7,7 @@
    "MinimumProductVersion": "2.6.0",
    "ModelNamespace": null,
    "OutputContextPath": null,
-   "OutputPath": "Models\/cart",
+   "OutputPath": "Models\/wishlist",
    "PreserveCasingWithRegex": true,
    "ProjectRootNamespace": "NestLeaf",
    "Schemas": null,
@@ -16,7 +16,15 @@
    "T4TemplatePath": null,
    "Tables": [
       {
-         "Name": "[dbo].[Cart]",
+         "Name": "[dbo].[Addresses]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[OrderItems]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Orders]",
          "ObjectType": 0
       }
    ],
