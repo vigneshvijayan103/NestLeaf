@@ -30,13 +30,15 @@ builder.Services.AddScoped<IcategoryService, CategoryService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IwishlistService, WishlistService>();
 builder.Services.AddScoped<IAddressService, AddressService>();
+builder.Services.AddScoped<IorderServices, OrderService>();
+
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: MyAllowSpecificOrigins,
         policy =>
         {
-            policy.WithOrigins("http://127.0.0.1:5500") // or your frontend address
+            policy.WithOrigins("http://127.0.0.1:5500") //  frontend address
                   .AllowAnyHeader()
                   .AllowAnyMethod();
         });

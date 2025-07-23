@@ -37,18 +37,29 @@ namespace NestLeaf.Controllers
         {
             int userId = GetUserId();
 
+            try
+            {
+                var result = await _cartService.AddtoCart(dto, userId);
 
-            var result = await _cartService.AddtoCart(dto, userId);
+                return Ok(new ApiResponse<CartItemDto>(true, "Product added to cart", result));
 
-            return Ok(new ApiResponse<CartItemDto>(true, "Product added to cart", result));
-
-
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse<string>(false, ex.Message, null));
+            }
         }
+
+           
+
+
+       
         [HttpGet]
 
         public async Task<IActionResult> GetCart()
         {
             int userId = GetUserId();
+
 
             var result = await _cartService.GetCart(userId);
 
@@ -69,7 +80,7 @@ namespace NestLeaf.Controllers
             var result = await _cartService.UpdateCartQuantity(dto, userId);
 
             if (result == null)
-                return NotFound(new ApiResponse<ViewCartDto>(false, "Item not found", result));
+                return NotFound(new ApiResponse<ViewCartDto>(false, "Item not found or quantity exceeds", result));
 
             return Ok(new ApiResponse<ViewCartDto>(true, "Product quantity updated successfully", result));
 
