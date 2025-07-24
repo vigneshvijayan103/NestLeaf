@@ -7,7 +7,6 @@ namespace NestLeaf.Services
     public interface IcategoryService
     {
         Task<Category> AddCategory(AddCategoryDto dto);
-        Task<ApiResponse<string>> UpdateCategory(UpdateCategoryDto dto);
-
+        Task<bool> UpdateCategory(UpdateCategoryDto dto);
     }
 }

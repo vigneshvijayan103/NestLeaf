@@ -25,6 +25,7 @@ namespace NestLeaf.Controllers
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             return int.Parse(userIdClaim.Value);
         }
+
         [HttpPost]
         [Authorize(Roles = "user")]
 

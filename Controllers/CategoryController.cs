@@ -31,17 +31,16 @@ namespace NestLeaf.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCategory(int id, [FromBody] UpdateCategoryDto dto)
+        public async Task<IActionResult> UpdateCategory( [FromBody] UpdateCategoryDto dto)
         {
-            if (id != dto.Id)
-                return BadRequest(new ApiResponse<string>(false, "ID mismatch", null));
-
-            var result = await _categoryService.UpdateCategory(dto);
           
-            if (!result.Success)
-                return NotFound(result);
+            var result = await _categoryService.UpdateCategory(dto);
 
-            return Ok(result);
+
+            if (!result)
+                return NotFound(new ApiResponse<string>(false, "Category not found", null));
+
+            return Ok(new ApiResponse<string>(true, "Category updated successfully", null));
         }
 
 

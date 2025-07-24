@@ -55,13 +55,13 @@ namespace NestLeaf.Services
 
         }
 
-        public async Task<ApiResponse<string>> UpdateProduct([FromBody]UpdateProductDto dto)
+        public async Task<bool> UpdateProduct([FromBody]UpdateProductDto dto)
         {
             var product = await _context.Products.FindAsync(dto.Id);
 
             if (product == null)
             {
-                return new ApiResponse<string>(false, "Product not found",null); 
+                   return false;
             }
 
             if (!string.IsNullOrEmpty(dto.Name))
@@ -85,17 +85,22 @@ namespace NestLeaf.Services
       
             await _context.SaveChangesAsync();
 
-            return new ApiResponse<string>(true, "Product updated successfully",null); 
+          
+
+            return true;
         }
 
-        public async Task<ApiResponse<string>> DeleteProduct(int id)
+        public async Task<bool> DeleteProduct(int id)
         {
             var rowsAffected = await _dbConnection.ExecuteAsync("DeleteProductById", new { ProductId = id }, commandType: CommandType.StoredProcedure);
 
             if (rowsAffected == 0)
-                return new ApiResponse<string>(false, "Product not found or already deleted",null);
 
-            return new ApiResponse<string>(true, "Product deleted successfully",null);
+                return false;
+               
+
+          
+            return true;
         }
 
 

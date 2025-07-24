@@ -63,7 +63,7 @@ namespace NestLeaf.Controllers
 
             if (userlog == "blocked")
             {
-                return StatusCode(400, (new ApiResponse<object>(false, "User is blocked,Please Contact Support", null)));
+                return StatusCode(403, (new ApiResponse<object>(false, "User is blocked,Please Contact Support", null)));
             }
 
             
