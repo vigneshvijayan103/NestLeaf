@@ -28,17 +28,16 @@ namespace NestLeaf.Services
             return category;
         }
 
-        public async Task<ApiResponse<string>> UpdateCategory(UpdateCategoryDto dto)
+        public async Task<bool> UpdateCategory(UpdateCategoryDto dto)
         {
             var category = await _context.Categories.FindAsync(dto.Id);
-
             if (category == null)
-                return new ApiResponse<string>(false, "Category not found", null);
+                return false;
 
             category.CategoryName = dto.CategoryName;
             await _context.SaveChangesAsync();
 
-            return new ApiResponse<string>(true, "Category updated successfully", null);
+            return true;
         }
 
 

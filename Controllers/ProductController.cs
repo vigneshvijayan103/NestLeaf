@@ -78,10 +78,13 @@ namespace NestLeaf.Controllers
         {
             var response = await _productService.UpdateProduct(dto);
 
-            if (!response.Success)
-                return NotFound(response); 
+            if (!response)
+              
+                return NotFound (new ApiResponse<string>(false, "Product not found",null));
 
             return Ok(response);
+
+            return Ok( new ApiResponse<string>(true, "Product updated successfully",null));
         }
 
         [Authorize(Roles = "admin")]
@@ -90,13 +93,14 @@ namespace NestLeaf.Controllers
         {
             var result = await _productService.DeleteProduct(id);
 
-            if (!result.Success)
-                return NotFound(result);
+            if (!result)
+             return NotFound( new ApiResponse<string>(false, "Product not found or already deleted", null));
 
-            return Ok(result);
+           
+            return Ok( new ApiResponse<string>(true, "Product deleted successfully",null));
         }
 
-      
+
 
 
 

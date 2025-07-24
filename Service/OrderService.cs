@@ -19,14 +19,14 @@ namespace NestLeaf.Service
 
         public async Task<bool> AddOrderAsync(AddOrderDto dto, int userId)
         {
-            // Validate address
+          
             var address = await _context.Addresses
                 .FirstOrDefaultAsync(a => a.Id == dto.ShippingAddressId && a.UserId == userId && a.DeletedAt == null);
 
             if (address == null)
                 return false;
 
-            // Load product data
+            
             var productIds = dto.Items.Select(x => x.ProductId).ToList();
 
             var products = await _context.Products
@@ -36,14 +36,14 @@ namespace NestLeaf.Service
             if (products.Count != productIds.Count)
                 return false;
 
-            // Check stock availability
+            
             foreach (var item in dto.Items)
             {
                 if (!products.TryGetValue(item.ProductId, out var product))
                     return false;
 
                 if (product.Quantity < item.Quantity)
-                    return false; // Insufficient stock
+                    return false; 
             }
 
             var order = new Order
@@ -63,7 +63,6 @@ namespace NestLeaf.Service
                 var price = product.Price;
                 total += price * item.Quantity;
 
-                // Decrease stock
                 product.Quantity -= item.Quantity;
 
                 order.OrderItems.Add(new OrderItem
@@ -109,7 +108,10 @@ namespace NestLeaf.Service
             );
 
             return orderDict.Values.ToList();
+
         }
+
+        
         public async Task<OrderDto?> GetOrderById(int orderId, int userId)
         {
             var orderDict = new Dictionary<int, OrderDto>();

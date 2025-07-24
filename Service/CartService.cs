@@ -57,8 +57,6 @@ namespace NestLeaf.Service
                 items = Getcartitem,
                 CartTotalPrice = Getcartitem.Sum(t => t.TotalPrice)
 
-
-
             };
 
             return result;

@@ -33,9 +33,11 @@ namespace NestLeaf.Controllers
 
             var result = await _orderService.AddOrderAsync(dto, userId);
             if (!result)
-                return BadRequest("Order creation failed. Check address or product info.");
+                return BadRequest(new ApiResponse<string>(false,"Order creation failed. Check address or product info.",null));
 
-            return Ok("Order placed successfully.");
+            //return Ok("Order placed successfully.");
+
+            return Ok(new ApiResponse<string>(true, "Order placed successfully.", null));
         }
 
        
@@ -48,9 +50,9 @@ namespace NestLeaf.Controllers
             var orders = await _orderService.GetOrders(userid);
 
             if (orders == null || !orders.Any())
-                return NotFound(new { Message = "No orders found for this user." });
+                return NotFound(new ApiResponse<string>(false,"No order found for this user",null));
 
-            return Ok(orders);
+            return Ok(new ApiResponse<List<OrderDto>>(true, "Orders fetched successfully",orders));
 
            
         }
@@ -66,10 +68,10 @@ namespace NestLeaf.Controllers
 
             var order = await _orderService.GetOrderById(orderId, userid);
 
-                if (order == null)
-                    return NotFound(new { Message = "Order not found." });
+            if (order == null)
+                return NotFound(new ApiResponse<string>(false, "Order not found.", null));
 
-                return Ok(order);
+                 return Ok(new ApiResponse<OrderDto>(true, "Orders fetched successfully",order));
             
             
         }

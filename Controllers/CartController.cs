@@ -46,7 +46,7 @@ namespace NestLeaf.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new ApiResponse<string>(false, ex.Message, null));
+                return NotFound(new ApiResponse<string>(false, ex.Message, null));
             }
         }
 

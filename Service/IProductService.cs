@@ -1,4 +1,5 @@
-﻿using NestLeaf.Dto;
+﻿using Microsoft.AspNetCore.Mvc;
+using NestLeaf.Dto;
 using NestLeaf.Models;
 using NestLeaf.Response;
 namespace NestLeaf.Services
@@ -11,9 +12,9 @@ namespace NestLeaf.Services
 
         Task<Product>AddProduct(AddProductDto dto);
 
-        Task<ApiResponse<string>> UpdateProduct(UpdateProductDto dto);
+        Task<bool> UpdateProduct([FromBody] UpdateProductDto dto);
 
-        Task<ApiResponse<string>> DeleteProduct(int id);
+        Task<bool> DeleteProduct(int id);
 
         Task<List<ProductwithCategoryDto>> SearchProductsByCategory(string categoryName);
 
