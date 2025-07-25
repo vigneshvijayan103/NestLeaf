@@ -142,6 +142,69 @@ namespace NestLeaf.Service
             return orderDict.Values.FirstOrDefault();
         }
 
+     public async Task<bool> CancelOrder(int? userId, int orderId, string cancelledBy)
+        {
+            var result = await _connection.QuerySingleOrDefaultAsync<int>("CancelOrder",new { userId, orderId, cancelledBy }, commandType: CommandType.StoredProcedure);
+
+            return result == 1;
+
+        }
+
+
+        public async Task<List<AdminOrderDto>> GetAllOrdersAsync()
+        {
+            var flatOrders = await _connection.QueryAsync<AdminOrderFlatDto>(
+                "GetallOrders",
+                commandType: CommandType.StoredProcedure
+            );
+
+            var orderDict = new Dictionary<int, AdminOrderDto>();
+
+            foreach (var row in flatOrders)
+            {
+                if (!orderDict.ContainsKey(row.OrderId))
+                {
+                    orderDict[row.OrderId] = new AdminOrderDto
+                    {
+                        OrderId = row.OrderId,
+                        Username = row.Username,
+                        Email = row.Email,
+                        OrderDate = row.OrderDate,
+                        TotalAmount = row.TotalAmount,
+                        PaymentMethod = row.PaymentMethod,
+                        Status = row.Status,
+                        Items = new List<OrderItemDto>()
+                    };
+                }
+
+                var item = new OrderItemDto
+                {
+                    ProductId = row.ProductId,
+                    ProductName = row.ProductName,
+                    Quantity = row.Quantity,
+                    Price = row.Price
+                };
+
+                orderDict[row.OrderId].Items.Add(item);
+            }
+
+            return orderDict.Values.ToList();
+        }
+
+        public async Task<bool> UpdateOrderStatusAsync(int orderId, int status)
+        {
+            var rowsAffected = await _connection.ExecuteAsync("UpdateOrderStatus", new { orderId, status }, commandType: CommandType.StoredProcedure);
+
+            return rowsAffected > 0;
+        }
+
+        public async Task<bool> DeleteOrder(int orderId)
+        {
+            var rowAffected = await _connection.ExecuteAsync("DeleteOrder", new { orderId }, commandType: CommandType.StoredProcedure);
+
+            return rowAffected > 0;
+        }
+
 
 
 

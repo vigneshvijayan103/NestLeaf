@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using NestLeaf.Enum;
 
 namespace NestLeaf.Models;
 
@@ -14,7 +15,7 @@ public partial class Order
 
     public decimal TotalAmount { get; set; }
 
-    public string Status { get; set; }
+    public OrderStatus Status { get; set; }
 
     public string PaymentMethod { get; set; }
 
@@ -24,7 +25,9 @@ public partial class Order
 
     public DateTime? UpdatedAt { get; set; }
 
-    public DateTime? DeletedAt { get; set; }
+    public DateTime? CancelledAt { get; set; }
+
+    public string CancelledBy {  get; set; }
 
     public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 

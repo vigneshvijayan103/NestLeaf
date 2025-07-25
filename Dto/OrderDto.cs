@@ -1,11 +1,12 @@
-﻿namespace NestLeaf.Dto
+﻿using NestLeaf.Enum;
+namespace NestLeaf.Dto
 {
     public class OrderDto
     {
         public int Id { get; set; }
         public DateTime OrderDate { get; set; }
         public decimal TotalAmount { get; set; }
-        public string Status { get; set; }
+        public OrderStatus Status { get; set; }
         public string PaymentMethod { get; set; }
         public int ShippingAddressId { get; set; }
 

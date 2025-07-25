@@ -8,6 +8,7 @@ using NestLeaf.Service;
 using NestLeaf.Services;
 using System.Data;
 using System.Text;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,7 +32,7 @@ builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IwishlistService, WishlistService>();
 builder.Services.AddScoped<IAddressService, AddressService>();
 builder.Services.AddScoped<IorderServices, OrderService>();
-
+builder.Services.AddScoped<IadminService, AdminService>();
 
 builder.Services.AddCors(options =>
 {
@@ -66,7 +67,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 
-builder.Services.AddControllers();
+
+builder.Services
+    .AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
+
 
 
 builder.Services.AddEndpointsApiExplorer();
