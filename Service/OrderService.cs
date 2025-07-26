@@ -49,8 +49,8 @@ namespace NestLeaf.Service
             var order = new Order
             {
                 UserId = userId,
-                PaymentMethod = dto.PaymentMethod,
                 ShippingAddressId = dto.ShippingAddressId,
+                PaymentStatus= "Pending",
                 OrderDate = DateTime.UtcNow,
                 OrderItems = new List<OrderItem>()
             };

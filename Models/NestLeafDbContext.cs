@@ -193,11 +193,8 @@ public partial class NestLeafDbContext : DbContext
             entity.Property(e => e.OrderDate)
                 .HasDefaultValueSql("(getutcdate())")
                 .HasColumnType("datetime");
-            entity.Property(e => e.PaymentMethod).HasMaxLength(50);
-            //entity.Property(e => e.Status)
-            //    .IsRequired()
-            //    .HasMaxLength(50)
-            //    .HasDefaultValue("Pending");
+            entity.Property(e => e.PaymentStatus).HasMaxLength(50);
+          
             entity.Property(e => e.TotalAmount).HasColumnType("decimal(10, 2)");
             entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
 

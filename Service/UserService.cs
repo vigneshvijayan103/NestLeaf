@@ -8,6 +8,8 @@ using NestLeaf.Models;
 using System.Data;
 using System.Data.Common;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+
 
 
 
@@ -123,27 +125,18 @@ namespace NestLeaf.Services
             return rowsAffected > 0;
         }
 
-        public async Task<bool> BlockUser(int id)
+        public async Task<int> BlockUnBlockUser(int id)
         {
-            var rowsAffected = await _connection.ExecuteAsync(
-                "BlockUser",
-                new { UserId = id },
-                commandType: CommandType.StoredProcedure
-            );
+            var result = await _connection.QueryFirstOrDefaultAsync<int>(
+           "BlockUser",
+           new { UserId = id },
+           commandType: CommandType.StoredProcedure
+       );
 
-            return rowsAffected > 0;
+            return result;
         }
 
-        public async Task<bool> Unblock(int id)
-        {
-            var rowsAffected = await _connection.ExecuteAsync(
-                "UnblockUser",
-                new { UserId = id },
-                commandType: CommandType.StoredProcedure
-            );
-
-            return rowsAffected > 0;
-        }
+     
 
 
 

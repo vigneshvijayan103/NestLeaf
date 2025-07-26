@@ -10,7 +10,7 @@ namespace NestLeaf.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "admin")]
+    //[Authorize(Roles = "admin")]
     public class CategoryController : ControllerBase
     {
         private readonly IcategoryService _categoryService;
@@ -18,6 +18,15 @@ namespace NestLeaf.Controllers
         public CategoryController(IcategoryService categoryService)
         {
             _categoryService=categoryService;
+        }
+
+        [HttpGet]
+
+        public async Task<IActionResult> GetCategory()
+        {
+            var result = await _categoryService.GetCategory();
+
+            return Ok(new ApiResponse<List<CategoryViewDto>>(true, "All Category Fetched Succesfully", result));
         }
 
         [HttpPost]
@@ -30,7 +39,7 @@ namespace NestLeaf.Controllers
             return Ok(new ApiResponse<Category>(true, "Category added successfully", newCategory));
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("Update")]
         public async Task<IActionResult> UpdateCategory( [FromBody] UpdateCategoryDto dto)
         {
           

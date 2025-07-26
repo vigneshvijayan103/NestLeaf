@@ -14,8 +14,8 @@ namespace NestLeaf.Services
         
 
         Task <bool> DeleteById(int id);
-        Task<bool> BlockUser(int id);
-        Task<bool> Unblock(int id);
+        Task<int> BlockUnBlockUser(int id);
+        
     }
 }
         

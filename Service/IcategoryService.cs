@@ -8,5 +8,6 @@ namespace NestLeaf.Services
     {
         Task<Category> AddCategory(AddCategoryDto dto);
         Task<bool> UpdateCategory(UpdateCategoryDto dto);
+        Task<List<CategoryViewDto>> GetCategory();
     }
 }

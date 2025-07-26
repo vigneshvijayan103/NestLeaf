@@ -1,4 +1,5 @@
-﻿using NestLeaf.Dto;
+﻿using Microsoft.EntityFrameworkCore;
+using NestLeaf.Dto;
 using NestLeaf.Models;
 using NestLeaf.Response;
 using System;
@@ -14,6 +15,21 @@ namespace NestLeaf.Services
         {
             _context = context;
         }
+
+        public async Task <List<CategoryViewDto>> GetCategory()
+        {
+            var Getcategory = await _context.Categories.Where(e => e.IsDeleted == false)
+                                    .Select(c => new CategoryViewDto
+                                    {
+                                        Id = c.Id,
+                                        CategoryName = c.CategoryName,
+                                        Description = c.Description
+                                    }).ToListAsync();
+
+            return Getcategory;
+        }
+
+
         public async Task<Category> AddCategory(AddCategoryDto dto)
         {
 
@@ -34,11 +50,24 @@ namespace NestLeaf.Services
             if (category == null)
                 return false;
 
-            category.CategoryName = dto.CategoryName;
+
+            if (!string.IsNullOrEmpty(dto.CategoryName))
+                category.CategoryName = dto.CategoryName;
+
+            if (!string.IsNullOrEmpty(dto.Description))
+                category.Description = dto.Description;
+
+                if (dto.IsDeleted.HasValue)
+            category.IsDeleted = dto.IsDeleted.Value;
+            category.UpdatedAt = DateTime.UtcNow;
+
             await _context.SaveChangesAsync();
 
             return true;
         }
+
+
+   
 
 
     }

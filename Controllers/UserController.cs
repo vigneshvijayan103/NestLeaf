@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using NestLeaf.Dto;
 using NestLeaf.Models;
-using NestLeaf.Services;
 using NestLeaf.Response;
+using NestLeaf.Services;
 
 namespace NestLeaf.Controllers
 {
@@ -68,40 +69,24 @@ namespace NestLeaf.Controllers
 
 
 
-        [HttpPost("{id}/block")]
-        public async Task<IActionResult>BlockUser(int id)
+        [HttpPost("blockUnBlock/{id}")]
+        public async Task<IActionResult> blockUnBlockUser(int id)
         {
-            var isBlock = await _userService.BlockUser(id);
+            var result = await _userService.BlockUnBlockUser(id);
 
-            if (!isBlock)
+            if (result == -1)
             {
-                return NotFound(new ApiResponse<object>(false, $"User with ID {id} not found", null
-                    ));
+                return NotFound(new ApiResponse<object>(false, $"User with ID {id} not found", null));
             }
 
-            return Ok(new ApiResponse<object>(true, "User Blocked successfully", null)
-                );
+            var message = result == 1 ? "User blocked successfully" : "User unblocked successfully";
+
+            return Ok(new ApiResponse<object>(true, message, null));
         }
 
 
 
-        [HttpPost("{id}/unblock")]
-        public async Task <IActionResult> UnblockUser(int id)
-        {
-            var isUnBlock = await _userService.Unblock(id);
-
-            if (!isUnBlock)
-            {
-                return NotFound(new ApiResponse<object>(false, $"User with ID {id} not found", null
-                    ));
-            }
-
-
-            return Ok(new ApiResponse<object>(true, "User Unblock successfully", null)
-                );
-
-        }
-
+     
 
 
 
