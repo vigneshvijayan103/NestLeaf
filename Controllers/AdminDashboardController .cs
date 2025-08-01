@@ -12,7 +12,7 @@ namespace NestLeaf.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(Roles = "admin")]
+    [Authorize(Roles = "admin")]
     public class AdminDashboardController : ControllerBase
     {
         private readonly IadminService _iadminService;
@@ -46,9 +46,6 @@ namespace NestLeaf.Controllers
             return Ok(new ApiResponse<int>(true, "Total user fetched successfully",users));
 
         }
-
-
-
 
     }
 }

@@ -142,7 +142,23 @@ namespace NestLeaf.Service
             return orderDict.Values.FirstOrDefault();
         }
 
-     public async Task<bool> CancelOrder(int? userId, int orderId, string cancelledBy)
+        public async Task<bool> MakePayment(PaymentRequestDto dto, int userId)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("@OrderId", dto.OrderId);
+            parameters.Add("@UserId", userId);
+            parameters.Add("@PaymentMethod", dto.PaymentMethod);
+
+            var result = await _connection.QueryFirstOrDefaultAsync<int>(
+                 "AddPayment",
+                parameters,
+                 commandType: CommandType.StoredProcedure
+             );
+
+            return result == 1;
+        }
+
+        public async Task<bool> CancelOrder(int? userId, int orderId, string cancelledBy)
         {
             var result = await _connection.QuerySingleOrDefaultAsync<int>("CancelOrder",new { userId, orderId, cancelledBy }, commandType: CommandType.StoredProcedure);
 
@@ -171,7 +187,7 @@ namespace NestLeaf.Service
                         Email = row.Email,
                         OrderDate = row.OrderDate,
                         TotalAmount = row.TotalAmount,
-                        PaymentMethod = row.PaymentMethod,
+                        PaymentStatus = row.PaymentStatus,
                         Status = row.Status,
                         Items = new List<OrderItemDto>()
                     };
@@ -193,18 +209,14 @@ namespace NestLeaf.Service
 
         public async Task<bool> UpdateOrderStatusAsync(int orderId, int status)
         {
+          
             var rowsAffected = await _connection.ExecuteAsync("UpdateOrderStatus", new { orderId, status }, commandType: CommandType.StoredProcedure);
 
             return rowsAffected > 0;
+         
         }
 
-        public async Task<bool> DeleteOrder(int orderId)
-        {
-            var rowAffected = await _connection.ExecuteAsync("DeleteOrder", new { orderId }, commandType: CommandType.StoredProcedure);
-
-            return rowAffected > 0;
-        }
-
+      
 
 
 

@@ -70,11 +70,11 @@ namespace NestLeaf.Services
 
         public async Task<string> UserLogin(UserLoginDto logindto)
         {
-            var user =  _context.Users.FromSqlRaw("Exec LoginUser @p0", logindto.Username).AsEnumerable().FirstOrDefault();
+            var user = _context.Users.FromSqlRaw("Exec LoginUser @p0", logindto.Username).AsEnumerable().FirstOrDefault();
 
-          
 
-             if (user == null || !BCrypt.Net.BCrypt.Verify(logindto.Password, user.Password))
+
+            if (user == null || !BCrypt.Net.BCrypt.Verify(logindto.Password, user.Password))
             {
                 return null;
             }
@@ -83,12 +83,15 @@ namespace NestLeaf.Services
             {
                 return "blocked";
             }
-      
+
 
             var token = _tokenService.createToken(user);
             return token;
             return user.Name;
+
         }
+
+
 
 
         public async Task<List<UserAdminDto>> GetAllUser()
@@ -136,7 +139,10 @@ namespace NestLeaf.Services
             return result;
         }
 
+
      
+
+
 
 
 

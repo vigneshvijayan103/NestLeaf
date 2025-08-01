@@ -22,8 +22,6 @@ namespace NestLeaf.Controllers
 
         }
 
-
-
         [HttpGet]
         
         public async Task<IActionResult> GetAll()
@@ -84,9 +82,9 @@ namespace NestLeaf.Controllers
             return Ok(new ApiResponse<object>(true, message, null));
         }
 
-
-
      
+
+
 
 
 

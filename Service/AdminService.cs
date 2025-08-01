@@ -26,10 +26,13 @@ namespace NestLeaf.Service
 
         public async Task<decimal> GetRevenueByDateAsync(DateTime startDate, DateTime endDate)
         {
+            var start = startDate.Date; 
+            var end = endDate.Date.AddDays(1).AddTicks(-1);
+
             return await _context.Orders
-                .Where(o => o.Status == OrderStatus.Delivered &&
-                            o.OrderDate >= startDate && o.OrderDate <= endDate)
-                .SumAsync(o => (decimal?)o.TotalAmount) ?? 0;
+        .Where(o => o.Status == OrderStatus.Delivered &&
+                    o.OrderDate >= start && o.OrderDate <= end)
+        .SumAsync(o => (decimal?)o.TotalAmount) ?? 0;
         }
         public async Task<int> GetTotalProductsPurchasedAsync()
         {

@@ -43,6 +43,26 @@ namespace NestLeaf.Controllers
             return Ok(new ApiResponse<ProductDto>(true, "Fetched  product successfully", getProduct));
         }
 
+
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchProducts([FromQuery] string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                return BadRequest(new ApiResponse<string>(false, "Search term cannot be empty.", null));
+
+            var products = await _productService.SearchProductsByNameAsync(name);
+
+            if (products == null || products.Count == 0)
+                return NotFound(new ApiResponse<string>(false, "No products found.", null));
+
+            return Ok(new ApiResponse<List<ProductDto>>(true, "Products found.", products));
+        }
+
+
+
+
+
+
         [HttpGet("search-by-category")]
         public async Task<IActionResult> SearchByCategory([FromQuery] string categoryName)
         {
@@ -98,6 +118,34 @@ namespace NestLeaf.Controllers
 
            
             return Ok( new ApiResponse<string>(true, "Product deleted successfully",null));
+        }
+
+        [Authorize(Roles = "admin")]
+        [HttpPut("{id}/status")]
+        public async Task<IActionResult> SetProductActiveInactive(int id, [FromBody] bool isActive)
+        {
+            var result = await _productService.ToggleProductActiveStatus(id, isActive);
+
+            if (!result)
+                return NotFound(new ApiResponse<string>(false, "Product not found or product deleted", null));
+
+            var status = isActive ? "activated" : "deactivated";
+            return Ok(new ApiResponse<string>(true, $"Product successfully {status}", null));
+        }
+
+
+
+        [HttpPost("paginated")]
+        public async Task<IActionResult> GetPaginatedProducts([FromBody] ProductFilterDto dto)
+        {
+            if (dto.PageNumber < 1 || dto.PageSize < 1)
+            {
+                return BadRequest(new ApiResponse<string>(false, "PageNumber and PageSize must be greater than 0", null));
+            }
+
+            var data = await _productService.GetPaginatedFilteredProducts(dto);
+
+            return Ok(new ApiResponse<PaginatedResult<ProductDto>>(true, "Products fetched successfully", data));
         }
 
 

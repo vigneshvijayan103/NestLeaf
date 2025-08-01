@@ -20,6 +20,8 @@ var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddDbContext<NestLeafDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+
+
 builder.Services.AddTransient<IDbConnection>(sp =>
     new SqlConnection(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -33,6 +35,8 @@ builder.Services.AddScoped<IwishlistService, WishlistService>();
 builder.Services.AddScoped<IAddressService, AddressService>();
 builder.Services.AddScoped<IorderServices, OrderService>();
 builder.Services.AddScoped<IadminService, AdminService>();
+builder.Services.AddScoped<IPlantCareService, PlantCareService>();
+
 
 builder.Services.AddCors(options =>
 {
@@ -119,6 +123,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseCors(MyAllowSpecificOrigins);   //kdlks
+
+app.UseMiddleware<NestLeaf.Middlewares.CustomExceptionMiddleware>();
 
 
 app.UseAuthentication();

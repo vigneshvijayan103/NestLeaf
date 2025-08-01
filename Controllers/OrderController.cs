@@ -26,7 +26,7 @@ namespace NestLeaf.Controllers
             return int.Parse(userIdClaim.Value);
         }
 
-        // Place Order - User only
+     
         [HttpPost]
         [Authorize(Roles = "user")]
         public async Task<IActionResult> PlaceOrder([FromBody] AddOrderDto dto)
@@ -40,7 +40,6 @@ namespace NestLeaf.Controllers
             return Ok(new ApiResponse<string>(true, "Order placed successfully.", null));
         }
 
-        // Get All Orders of Logged-in User
         [HttpGet]
         [Authorize(Roles = "user")]
         public async Task<IActionResult> GetOrdersByUserId()
@@ -54,7 +53,7 @@ namespace NestLeaf.Controllers
             return Ok(new ApiResponse<List<OrderDto>>(true, "Orders fetched successfully", orders));
         }
 
-        // Get Order by ID for user or admin
+      
         [HttpGet("{orderId}")]
         [Authorize(Roles = "user,admin")]
         public async Task<IActionResult> GetOrderById(int orderId)
@@ -68,7 +67,31 @@ namespace NestLeaf.Controllers
             return Ok(new ApiResponse<OrderDto>(true, "Order fetched successfully", order));
         }
 
-        // Cancel Order - user or admin
+      
+        [HttpPost("make-payment")]
+        [Authorize(Roles = "user")]
+        public async Task<IActionResult> MakePayment([FromBody] PaymentRequestDto dto)
+        {
+            var userId = GetUserId(); 
+
+            try
+            {
+                var success = await _orderService.MakePayment(dto, userId);
+
+                if (success)
+                    return Ok(new ApiResponse<string>(true, "Payment successful",null));
+                else
+                    return BadRequest(new ApiResponse<string>(false, "Invalid Order ID or already paid",null));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new ApiResponse<string>(false, "Something went wrong",null));
+            }
+        }
+
+        
+
+
         [HttpPut("CancelOrder/{orderId}")]
         [Authorize(Roles = "user,admin")]
         public async Task<IActionResult> CancelOrder(int orderId)
@@ -87,39 +110,45 @@ namespace NestLeaf.Controllers
             return Ok(new ApiResponse<string>(true, "Order cancelled successfully", null));
         }
 
-        // Admin - Get All Orders
+       
         [HttpGet("admin/GetAllOrders")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetAllOrders()
         {
-            var allOrders = await _orderService.GetAllOrdersAsync();
-            return Ok(new ApiResponse<List<AdminOrderDto>>(true, "Orders fetched successfully", allOrders));
+            try
+            {
+                var allOrders = await _orderService.GetAllOrdersAsync();
+                return Ok(new ApiResponse<List<AdminOrderDto>>(true, "Orders fetched successfully", allOrders));
+            }
+            catch (Exception ex)
+            {
+                
+                return StatusCode(500, new ApiResponse<string>(false, $"Internal Server Error: {ex.Message}", null));
+            }
+
         }
 
-        // Admin - Update Order Status
+   
         [HttpPut("admin/UpdateStatus")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateStatus(int orderId, int status)
         {
             var result = await _orderService.UpdateOrderStatusAsync(orderId, status);
+            try
+            {
+                if (!result)
+                    return NotFound(new ApiResponse<string>(false, "Order not found or update failed", null));
 
-            if (!result)
-                return NotFound(new ApiResponse<string>(false, "Order not found or update failed", null));
+                return Ok(new ApiResponse<string>(true, "Order status updated successfully", null));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponse<string>(false, $"Internal error: {ex.Message}", null));
+            }
 
-            return Ok(new ApiResponse<string>(true, "Order status updated successfully", null));
         }
 
-        // Admin - Delete Order
-        [HttpPut("admin/DeleteOrder")]
-        [Authorize(Roles = "admin")]
-        public async Task<IActionResult> DeleteOrder(int orderId)
-        {
-            var result = await _orderService.DeleteOrder(orderId);
-
-            if (!result)
-                return NotFound(new ApiResponse<string>(false, "No order found. Check the Order ID.", null));
-
-            return Ok(new ApiResponse<string>(true, "Order deleted successfully", null));
-        }
+     
+    
     }
 }

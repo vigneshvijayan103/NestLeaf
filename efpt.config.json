@@ -16,15 +16,11 @@
    "T4TemplatePath": null,
    "Tables": [
       {
-         "Name": "[dbo].[Addresses]",
+         "Name": "[dbo].[Payments]",
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[OrderItems]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[Orders]",
+         "Name": "[dbo].[PlantIssues]",
          "ObjectType": 0
       }
    ],

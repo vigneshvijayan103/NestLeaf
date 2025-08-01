@@ -38,6 +38,8 @@ namespace NestLeaf.Services
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+     
+
     }
 }
 

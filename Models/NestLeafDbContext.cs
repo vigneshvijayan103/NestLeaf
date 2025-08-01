@@ -32,6 +32,11 @@ public partial class NestLeafDbContext : DbContext
 
     public virtual DbSet<OrderItem> OrderItems { get; set; }
 
+    public virtual DbSet<Payment> Payments { get; set; }
+
+    public virtual DbSet<PlantIssue> PlantIssues { get; set; }
+
+
 
 
 

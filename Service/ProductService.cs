@@ -1,6 +1,8 @@
 ﻿using Dapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using NestLeaf.Dto;
 using NestLeaf.Models;
 using NestLeaf.Response;
@@ -55,6 +57,22 @@ namespace NestLeaf.Services
 
         }
 
+        public async Task<List<ProductDto>> SearchProductsByNameAsync(string name)
+        {
+          
+            var parameters = new { Name = name };
+
+            var result = await _dbConnection.QueryAsync<ProductDto>(
+                "SearchProductsByName",
+                parameters,
+                commandType: CommandType.StoredProcedure
+            );
+
+            return result.ToList();
+        }
+
+
+
         public async Task<bool> UpdateProduct([FromBody]UpdateProductDto dto)
         {
             var product = await _context.Products.FindAsync(dto.Id);
@@ -95,13 +113,21 @@ namespace NestLeaf.Services
             var rowsAffected = await _dbConnection.ExecuteAsync("DeleteProductById", new { ProductId = id }, commandType: CommandType.StoredProcedure);
 
             if (rowsAffected == 0)
-
                 return false;
                
-
-          
             return true;
         }
+
+        public async Task<bool> ToggleProductActiveStatus(int productId, bool isActive)
+        {
+            var rowsAffected = await _dbConnection.ExecuteAsync(
+                "ToggleProductActiveStatus",
+                new { ProductId = productId, IsActive = isActive },
+                commandType: CommandType.StoredProcedure);
+
+            return rowsAffected > 0;
+        }
+
 
 
         public async Task<List<ProductwithCategoryDto>> SearchProductsByCategory(string categoryName)
@@ -112,6 +138,36 @@ namespace NestLeaf.Services
 
             return products.ToList();
         }
+
+        public async Task<PaginatedResult<ProductDto>> GetPaginatedFilteredProducts(ProductFilterDto dto)
+        {
+            var result = new PaginatedResult<ProductDto>();
+
+            var parameters = new
+            {
+                PageNumber = dto.PageNumber,
+                PageSize = dto.PageSize,
+                CategoryId = dto.CategoryId,
+                MinPrice = dto.MinPrice,
+                MaxPrice = dto.MaxPrice
+               
+            };
+                using var multi = await _dbConnection.QueryMultipleAsync(
+              "FilterPaginatedProducts",
+                 parameters,
+               commandType: CommandType.StoredProcedure
+            );
+
+
+            result.Items = (await multi.ReadAsync<ProductDto>()).ToList();
+            result.TotalCount = await multi.ReadFirstAsync<int>();
+
+            return result;
+        }
+
+
+
+
 
 
 
