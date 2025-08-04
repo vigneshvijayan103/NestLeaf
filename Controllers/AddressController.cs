@@ -54,6 +54,8 @@ namespace NestLeaf.Controllers
             return Ok(new ApiResponse<List<AddressDto>>(true, "Addresses fetched", data));
         }
 
+
+
         [HttpPut("{id}")]
         [Authorize(Roles = "user")]
         public async Task<IActionResult> UpdateAddress(int id, [FromBody] UpdateAddressDto dto)
@@ -68,6 +70,7 @@ namespace NestLeaf.Controllers
 
             return Ok(new ApiResponse<string>(true, "Address updated successfully", null));
         }
+
 
         [HttpDelete("{id}")]
         [Authorize(Roles = "user")]

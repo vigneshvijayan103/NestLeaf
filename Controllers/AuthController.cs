@@ -61,14 +61,14 @@ namespace NestLeaf.Controllers
                 return Unauthorized(new ApiResponse<object>(false, "Invalid username or password.", null));
             }
 
-            if (userlog == "blocked")
+            if (userlog.Token == "blocked")
             {
                 return StatusCode(403, (new ApiResponse<object>(false, "User is blocked,Please Contact Support", null)));
             }
 
-            
-           
-            return Ok(new ApiResponse<string>(true, "Login successfull",userlog));
+
+
+            return Ok(new ApiResponse<LoginResponseDto>(true, "Login successful", userlog));
 
         }
 

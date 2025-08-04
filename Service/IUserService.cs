@@ -7,7 +7,7 @@ namespace NestLeaf.Services
     public interface IUserService
     {
         Task<UserRegisterDto> RegisterUser(UserRegisterDto register);
-        Task<string> UserLogin(UserLoginDto logindto);
+        Task<LoginResponseDto> UserLogin(UserLoginDto logindto);
         Task<List<UserAdminDto>> GetAllUser();
 
         Task<UserAdminDto> GetById(int id);

@@ -30,18 +30,29 @@ namespace NestLeaf.Middlewares
 
         private Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
-            var statusCode = HttpStatusCode.InternalServerError;
+            HttpStatusCode statusCode = HttpStatusCode.InternalServerError;
 
-            var response = new ApiResponse<string>(
+            var errorResponse = new
+            {
+                StatusCode = (int)statusCode,
+                ExceptionType = exception.GetType().Name,
+                Message = $"Error: {exception.Message}"
+            };
+
+            var apiResponse = new ApiResponse<object>(
                 false,
-                "Something went wrong. Please try again later.",
-                null
+                errorResponse.Message,
+                new
+                {
+                    errorResponse.StatusCode,
+                    errorResponse.ExceptionType
+                }
             );
 
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)statusCode;
 
-            var json = JsonSerializer.Serialize(response);
+            var json = JsonSerializer.Serialize(apiResponse);
             return context.Response.WriteAsync(json);
         }
     }

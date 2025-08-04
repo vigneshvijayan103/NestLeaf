@@ -13,7 +13,7 @@ namespace NestLeaf.Dto
         public string PaymentStatus { get; set; }
         public OrderStatus Status { get; set; }
 
-        public List<OrderItemDto> Items { get; set; }
+        public List<OrderItemDto> Items { get; set; } = new();
     }
 
 

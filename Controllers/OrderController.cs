@@ -58,11 +58,17 @@ namespace NestLeaf.Controllers
         [Authorize(Roles = "user,admin")]
         public async Task<IActionResult> GetOrderById(int orderId)
         {
-            var userId = GetUserId();
+            int? userId = null;
+
+            if (!User.IsInRole("admin"))
+            {
+                userId = GetUserId();
+            }
+
             var order = await _orderService.GetOrderById(orderId, userId);
 
             if (order == null)
-                return NotFound(new ApiResponse<string>(false, "Order not found.", null));
+                return NotFound(new ApiResponse<string>(false, $"No order found with ID {orderId} for current user..", null));
 
             return Ok(new ApiResponse<OrderDto>(true, "Order fetched successfully", order));
         }

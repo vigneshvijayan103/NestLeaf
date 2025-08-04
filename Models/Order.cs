@@ -17,7 +17,7 @@ public partial class Order
 
     public OrderStatus Status { get; set; }
 
-    public string PaymentStatus { get; set; }
+    public bool IsPaid { get; set; }
 
     public int ShippingAddressId { get; set; }
 
@@ -28,6 +28,8 @@ public partial class Order
     public DateTime? CancelledAt { get; set; }
 
     public string CancelledBy {  get; set; }
+
+  
 
     public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 

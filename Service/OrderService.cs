@@ -50,7 +50,7 @@ namespace NestLeaf.Service
             {
                 UserId = userId,
                 ShippingAddressId = dto.ShippingAddressId,
-                PaymentStatus= "Pending",
+                IsPaid= false,
                 OrderDate = DateTime.UtcNow,
                 OrderItems = new List<OrderItem>()
             };
@@ -82,64 +82,45 @@ namespace NestLeaf.Service
         }
         public async Task<List<OrderDto>> GetOrders(int userId)
         {
-            var orderDict = new Dictionary<int, OrderDto>();
 
-            var result = await _connection.QueryAsync<OrderDto, OrderItemDto, OrderDto>(
+
+          using  var result = await _connection.QueryMultipleAsync(
                 "GetOrders",
-                (order, item) =>
-                {
-                    if (!orderDict.TryGetValue(order.Id, out var currentOrder))
-                    {
-                        currentOrder = order;
-                        currentOrder.Items = new List<OrderItemDto>();
-                        orderDict.Add(currentOrder.Id, currentOrder);
-                    }
-
-                    if (item?.ProductId != 0)
-                    {
-                        currentOrder.Items.Add(item);
-                    }
-
-                    return currentOrder;
-                },
                 new { UserId = userId },
-                commandType: CommandType.StoredProcedure,
-                splitOn: "ProductId"
-            );
+                commandType: CommandType.StoredProcedure);
 
-            return orderDict.Values.ToList();
+            var orders = (await result.ReadAsync<OrderDto>()).ToList();
+            var items = (await result.ReadAsync<OrderItemDto>()).ToList();
 
+            foreach (var order in orders)
+            {
+                order.Items = items.Where(i => i.OrderId == order.Id).ToList();
+                 
+            }
+            return orders;
         }
 
-        
-        public async Task<OrderDto?> GetOrderById(int orderId, int userId)
+
+
+
+        public async Task<OrderDto?> GetOrderById(int orderId, int? userId)
         {
-            var orderDict = new Dictionary<int, OrderDto>();
+            var parameters = new DynamicParameters();
+            parameters.Add("@OrderId", orderId);
+            parameters.Add("@UserId", userId);
 
-            var result = await _connection.QueryAsync<OrderDto, OrderItemDto, OrderDto>(
-                "GetOrderById",
-                (order, item) =>
-                {
-                    if (!orderDict.TryGetValue(order.Id, out var currentOrder))
-                    {
-                        currentOrder = order;
-                        currentOrder.Items = new List<OrderItemDto>();
-                        orderDict.Add(currentOrder.Id, currentOrder);
-                    }
+            using var result = await _connection.QueryMultipleAsync("GetOrderById", parameters, commandType: CommandType.StoredProcedure);
 
-                    if (item?.ProductId != 0)
-                    {
-                        currentOrder.Items.Add(item);
-                    }
+            var order = (await result.ReadAsync<OrderDto>()).FirstOrDefault();
+            if (order == null)
+                return null;
 
-                    return currentOrder;
-                },
-                new { OrderId = orderId, UserId = userId },
-                commandType: CommandType.StoredProcedure,
-                splitOn: "ProductId"
-            );
+            var items = (await result.ReadAsync<OrderItemDto>()).ToList();
 
-            return orderDict.Values.FirstOrDefault();
+            order.Items = items;
+
+            return order;
+
         }
 
         public async Task<bool> MakePayment(PaymentRequestDto dto, int userId)
@@ -169,42 +150,18 @@ namespace NestLeaf.Service
 
         public async Task<List<AdminOrderDto>> GetAllOrdersAsync()
         {
-            var flatOrders = await _connection.QueryAsync<AdminOrderFlatDto>(
-                "GetallOrders",
-                commandType: CommandType.StoredProcedure
-            );
+            using var result = await _connection.QueryMultipleAsync("GetAllOrders",commandType: CommandType.StoredProcedure);
 
-            var orderDict = new Dictionary<int, AdminOrderDto>();
+            var orders = (await result.ReadAsync<AdminOrderDto>()).ToList();
+            var items = (await result.ReadAsync<OrderItemDto>()).ToList();
 
-            foreach (var row in flatOrders)
+            foreach (var order in orders)
             {
-                if (!orderDict.ContainsKey(row.OrderId))
-                {
-                    orderDict[row.OrderId] = new AdminOrderDto
-                    {
-                        OrderId = row.OrderId,
-                        Username = row.Username,
-                        Email = row.Email,
-                        OrderDate = row.OrderDate,
-                        TotalAmount = row.TotalAmount,
-                        PaymentStatus = row.PaymentStatus,
-                        Status = row.Status,
-                        Items = new List<OrderItemDto>()
-                    };
-                }
+                order.Items = items.Where(i => i.OrderId == order.OrderId).ToList();
 
-                var item = new OrderItemDto
-                {
-                    ProductId = row.ProductId,
-                    ProductName = row.ProductName,
-                    Quantity = row.Quantity,
-                    Price = row.Price
-                };
-
-                orderDict[row.OrderId].Items.Add(item);
             }
+            return orders;
 
-            return orderDict.Values.ToList();
         }
 
         public async Task<bool> UpdateOrderStatusAsync(int orderId, int status)

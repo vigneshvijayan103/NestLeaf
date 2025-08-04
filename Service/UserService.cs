@@ -68,7 +68,7 @@ namespace NestLeaf.Services
         }
 
 
-        public async Task<string> UserLogin(UserLoginDto logindto)
+        public async Task<LoginResponseDto> UserLogin(UserLoginDto logindto)
         {
             var user = _context.Users.FromSqlRaw("Exec LoginUser @p0", logindto.Username).AsEnumerable().FirstOrDefault();
 
@@ -80,14 +80,21 @@ namespace NestLeaf.Services
             }
 
             if (user.IsBlocked)
-            {
-                return "blocked";
-            }
+                return new LoginResponseDto
+                {
+                    UserId = user.Id.ToString(),
+                    Username = user.Name,
+                    Token = "blocked"
+                };
 
 
             var token = _tokenService.createToken(user);
-            return token;
-            return user.Name;
+            return new LoginResponseDto
+            {
+                UserId = user.Id.ToString(),
+                Username = user.Name,
+                Token = token
+            };
 
         }
 

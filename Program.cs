@@ -36,6 +36,8 @@ builder.Services.AddScoped<IAddressService, AddressService>();
 builder.Services.AddScoped<IorderServices, OrderService>();
 builder.Services.AddScoped<IadminService, AdminService>();
 builder.Services.AddScoped<IPlantCareService, PlantCareService>();
+builder.Services.AddScoped<RazorpayService>();
+
 
 
 builder.Services.AddCors(options =>

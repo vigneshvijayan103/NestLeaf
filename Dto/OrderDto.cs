@@ -7,7 +7,7 @@ namespace NestLeaf.Dto
         public DateTime OrderDate { get; set; }
         public decimal TotalAmount { get; set; }
         public OrderStatus Status { get; set; }
-        public string PaymentStatus { get; set; }
+        public bool IsPaid { get; set; }
 
         public int ShippingAddressId { get; set; }
 
