@@ -41,9 +41,9 @@ Built for performance, scalability, and real-world use.
 | Framework    | ASP.NET Core Web API |
 | ORM          | EF Core + Dapper     |
 | Database     | SQL Server           |
-| Auth         | JWT Token, Refresh Token |
+| Auth         | JWT Token,           |
 | Payment      | Razorpay Integration |
-| Frontend     | HTML/Bootstrap (Coming) |
+| Frontend     | HTML/Bootstrap (Planning) |
 
 ---
 
