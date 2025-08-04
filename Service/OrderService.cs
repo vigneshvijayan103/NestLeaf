@@ -123,21 +123,7 @@ namespace NestLeaf.Service
 
         }
 
-        public async Task<bool> MakePayment(PaymentRequestDto dto, int userId)
-        {
-            var parameters = new DynamicParameters();
-            parameters.Add("@OrderId", dto.OrderId);
-            parameters.Add("@UserId", userId);
-            parameters.Add("@PaymentMethod", dto.PaymentMethod);
 
-            var result = await _connection.QueryFirstOrDefaultAsync<int>(
-                 "AddPayment",
-                parameters,
-                 commandType: CommandType.StoredProcedure
-             );
-
-            return result == 1;
-        }
 
         public async Task<bool> CancelOrder(int? userId, int orderId, string cancelledBy)
         {

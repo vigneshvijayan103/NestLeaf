@@ -6,7 +6,7 @@ namespace NestLeaf.Service
         Task<bool> AddOrderAsync(AddOrderDto dto, int userId);
         Task<List<OrderDto>> GetOrders(int userId);
         Task<OrderDto?> GetOrderById(int orderId, int? userId);
-        Task<bool> MakePayment(PaymentRequestDto dto, int userId);
+       
 
         Task<bool> CancelOrder(int? userId, int orderId, string cancelledBy);
 

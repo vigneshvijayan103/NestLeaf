@@ -73,30 +73,8 @@ namespace NestLeaf.Controllers
             return Ok(new ApiResponse<OrderDto>(true, "Order fetched successfully", order));
         }
 
-      
-        [HttpPost("make-payment")]
-        [Authorize(Roles = "user")]
-        public async Task<IActionResult> MakePayment([FromBody] PaymentRequestDto dto)
-        {
-            var userId = GetUserId(); 
 
-            try
-            {
-                var success = await _orderService.MakePayment(dto, userId);
-
-                if (success)
-                    return Ok(new ApiResponse<string>(true, "Payment successful",null));
-                else
-                    return BadRequest(new ApiResponse<string>(false, "Invalid Order ID or already paid",null));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new ApiResponse<string>(false, "Something went wrong",null));
-            }
-        }
-
-        
-
+       
 
         [HttpPut("CancelOrder/{orderId}")]
         [Authorize(Roles = "user,admin")]
